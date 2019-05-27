@@ -96,6 +96,7 @@ function newSearch(request, response) {
 }
 
 function getBook(request, response) {
+  console.log('getting book');
   request.model
     .get(request.params.id)
     .then(data => {
@@ -113,7 +114,7 @@ function createBook(request, response) {
   request.model
     .post(request.body)
     .then(result => {
-      console.log(result, 'thisis the resut!!');
+      console.log('this is the resut!!', result);
       response.redirect(`/books/${result.rows[0].id}`);
     })
     .catch(err => {

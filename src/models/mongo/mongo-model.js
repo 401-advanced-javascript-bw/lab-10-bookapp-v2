@@ -16,7 +16,7 @@ class Model {
   post(record) {
     console.log('posting!');
     let { title, author, isbn, image_url, description } = record;
-    let values = [title, author, isbn, image_url, description];
+    let values = { title, author, isbn, image_url, description };
     console.log(record);
     let newRecord = new this.schema(values);
     return newRecord.save().then(data => {
