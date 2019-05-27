@@ -2,25 +2,23 @@
 
 const express = require('express');
 
-const cwd = process.cwd();
+// const cwd = process.cwd();
 
 const router = express.Router();
 
 const superagent = require('superagent');
 
-const swagger = require('swagger-ui-express');
-const swaggerDocs = require('../../docs/config/swagger.json');
+// const swagger = require('swagger-ui-express');
+// const swaggerDocs = require('../../docs/config/swagger.json');
 
-const modelFinder = require(`${cwd}/src/middleware/model-finder.js`);
+const modelFinder = require(`../middleware/model-finder.js`);
+router.use(express.urlencoded({ extended: true }));
+router.use(express.static('public'));
 
-router.use('/api/v1/doc', swagger.serve, swagger.setup(swaggerDocs));
+// router.use('/api/v1/doc', swagger.serve, swagger.setup(swaggerDocs));
 router.use('/docs', express.static('docs'));
 router.param('model', modelFinder);
-
-//api routes
-
-// Set the view engine for server-side templating
-router.set('view engine', 'ejs');
+router.use(modelFinder);
 
 // API Routes
 router.get('/', getBooks);
@@ -37,14 +35,36 @@ router.get('*', (request, response) =>
 
 // HELPER FUNCTIONS
 
-function getBooks(request, response, next) {
+function Book(info) {
+  const placeholderImage = 'https://i.imgur.com/J5LVHEL.jpg';
+
+  this.title = info.title ? info.title : 'No title available';
+  this.author = info.authors ? info.authors[0] : 'No author available';
+  this.isbn = info.industryIdentifiers
+    ? `ISBN_13 ${info.industryIdentifiers[0].identifier}`
+    : 'No ISBN available';
+  this.image_url = info.imageLinks
+    ? info.imageLinks.smallThumbnail
+    : placeholderImage;
+  this.description = info.description
+    ? info.description
+    : 'No description available';
+  this.id = info.industryIdentifiers
+    ? `${info.industryIdentifiers[0].identifier}`
+    : '';
+}
+
+function getBooks(request, response) {
+  console.log('getting books');
+  console.log(request.model);
   request.model
     .get()
     .then(data => {
-      if (!data.length) {
+      console.log('this is get books!', data);
+      if (data[0].rows.rowCount === 0) {
         response.render('pages/searches/new');
       } else {
-        response.render('pages/index', { books: data.rows });
+        response.render('pages/index', { books: data[0].rows });
       }
     })
     .catch(err => handleError(err, response));
@@ -75,46 +95,44 @@ function newSearch(request, response) {
   response.render('pages/searches/new');
 }
 
-function getBook(request, response, next) {
+function getBook(request, response) {
   request.model
     .get(request.params.id)
-    .then(result => response.render('pages/books/show', result[0]))
-    .catch(next);
+    .then(data => {
+      response.render('pages/books/show', {
+        book: data[0].rows[0],
+        bookshelves: data[1].rows
+      });
+    })
+    .catch(err => {
+      err, response;
+    });
 }
 
-function createShelf(shelf) {
-  let normalizedShelf = shelf.toLowerCase();
-  return bookshelves.findOneAndUpdate(
-    { bookshelf: normalizedShelf },
-    { bookshelf: normalizedShelf },
-    { upsert: true, new: true }
-  );
-}
-
-function createBook(request, response, next) {
-  createShelf(request.body.bookshelf).then(shelf => {
-    let record = request.body;
-    record.bookshelf_id = shelf._id;
-    let book = new books(record);
-    book
-      .save()
-      .then(result => response.redirect(`/books/${result._id}`))
-      .catch(next);
-  });
-}
-
-function updateBook(request, response, next) {
+function createBook(request, response) {
   request.model
-    .put()
+    .post(request.body)
+    .then(result => {
+      console.log(result, 'thisis the resut!!');
+      response.redirect(`/books/${result.rows[0].id}`);
+    })
+    .catch(err => {
+      handleError(err, response);
+    });
+}
+
+function updateBook(request, response) {
+  request.model
+    .put(request.body, request.params.id)
     .then(response.redirect(`/books/${request.params.id}`))
-    .catch(next);
+    .catch(err => handleError(err.response));
 }
 
-function deleteBook(request, response, next) {
+function deleteBook(request, response) {
   request.model
-    .delete()
+    .delete(request.params.id)
     .then(response.redirect('/'))
-    .catch(next);
+    .catch(err => handleError(err, response));
 }
 
 function handleError(error, response) {
