@@ -6,7 +6,7 @@
 
 ### Links and Resources
 
-- [submission PR](http://xyz.com)
+- [submission PR](https://github.com/401-advanced-javascript-bw/lab-10-bookapp-v2/pull/1)
 - [travis](http://xyz.com)
 - [back-end](http://xyz.com) (when applicable)
 - [front-end](http://xyz.com) (when applicable)
