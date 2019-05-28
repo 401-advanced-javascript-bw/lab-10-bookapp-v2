@@ -8,26 +8,41 @@
 
 - [submission PR](https://github.com/401-advanced-javascript-bw/lab-10-bookapp-v2/pull/1)
 - [travis](http://xyz.com)
-- [back-end](http://xyz.com) (when applicable)
-- [front-end](http://xyz.com) (when applicable)
 
 #### Documentation
 
 - [api docs](http://xyz.com) (API servers)
 - [jsdoc](http://xyz.com) (Server assignments)
-- [styleguide](http://xyz.com) (React assignments)
 
 ### Modules
 
-#### `modulename.js`
+#### `books-model.js`
 
-##### Exported Values and Methods
+###### `new Books(schema) -> new book class`
 
-###### `foo(thing) -> string`
+#### `books-schema.js`
 
-Usage Notes or examples
+###### `schema for books`
 
-###### `bar(array) -> array`
+#### `bookshelves-model.js`
+
+###### `new Bookshelves(schema) -> new bookshelf class`
+
+#### `bookshelves-schema.js`
+
+###### `schema for bookshelves`
+
+#### `mongo-model.js`
+
+###### `Model.get(_id) -> object`
+
+###### `Model.post(record) -> object`
+
+###### `Model.put(_id, record) -> updated object`
+
+###### `Model.delete(_id)`
+
+### `sql-model.js`
 
 Usage Notes or examples
 
@@ -35,24 +50,29 @@ Usage Notes or examples
 
 #### `.env` requirements
 
-- `PORT` - Port Number
-- `MONGODB_URI` - URL to the running mongo instance/db
+- `PORT=8080`
+- `MONGODB_URI='mongodb://localhost:27017/lab-08'` (mongo)
+- `DATABASE_URL=postgres://localhost:5432/books_app` (sql)
 
 #### Running the app
 
+- `npm i`
 - `npm start`
-- Endpoint: `/foo/bar/`
-  - Returns a JSON object with abc in it.
-- Endpoint: `/bing/zing/`
-
-  - Returns a JSON object with xyz in it.
+- Endpoint: `/`
+  - Returns list of saved books.
+- Endpoint: `/searches`
+  - Returns a search form.
+- Endpoint: `searches/new`
+  - Returns a new search.
+- Endpoint: `/books/:id`
+  - Returns result of one book or update/ delete one book
+- Endpoint: `/books`
+  - Returns creates a new book in the saved collection
 
 #### Tests
 
-- How do you run tests?
-- What assertions were made?
-- What assertions need to be / should be made?
+- npm test to run tests
 
 #### UML
 
-Link to an image of the UML for your application and response to events
+![](./images/uml.png)
