@@ -61,10 +61,12 @@ function getBooks(request, response) {
     .get()
     .then(data => {
       console.log('this is get books!', data);
-      if (data[0].rows.rowCount === 0) {
+      if (data.rowCount === 0) {
+        console.log('💩');
         response.render('pages/searches/new');
       } else {
-        response.render('pages/index', { books: data[0].rows });
+        console.log('😍');
+        response.render('pages/index', { books: data.rows });
       }
     })
     .catch(err => handleError(err, response));
@@ -100,6 +102,7 @@ function getBook(request, response) {
   request.model
     .get(request.params.id)
     .then(data => {
+      console.log('this is the data!!!!!!', data[0].rows[0], data[1].rows);
       response.render('pages/books/show', {
         book: data[0].rows[0],
         bookshelves: data[1].rows

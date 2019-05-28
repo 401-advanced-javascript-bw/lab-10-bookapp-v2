@@ -6,6 +6,7 @@ class Model {
   }
 
   get(_id) {
+    console.log(_id);
     let queryObject = _id ? { _id } : {};
     return this.schema.find(queryObject).then(result => {
       let data = { rows: result, rowCount: result.length };
@@ -17,11 +18,10 @@ class Model {
     console.log('posting!');
     let { title, author, isbn, image_url, description } = record;
     let values = { title, author, isbn, image_url, description };
-    console.log(record);
     let newRecord = new this.schema(values);
     return newRecord.save().then(data => {
       //convert to data that can be readable
-      let result = { rows: [data], rowCount: [data].length };
+      let result = { rows: data, rowCount: data.length };
       return new Promise(resolve => resolve(result));
     });
   }

@@ -11,8 +11,8 @@ const books = mongoose.Schema(
     isbn: { type: String, required: true },
     image_url: { type: String },
     description: { type: String }
-  },
-  { toObject: { virtuals: true }, toJSON: { virtuals: true } }
+  }
+  // { toObject: { virtuals: true }, toJSON: { virtuals: true } }
 );
 
 module.exports = mongoose.model('books', books);
